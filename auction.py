@@ -22,7 +22,7 @@ while name.upper() != 'F' :
         else:
             print ("Sorry ", name, " You'll need to make another, higher bid.")
 
-#The end
+#The end 
 if highest_bid >= reserve_price:
     print ("Auction won by ", names[len(names)-1], " with a bid of $", highest_bid)
     for i in range (0, len(names)):
