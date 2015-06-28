@@ -1,0 +1,76 @@
+#load tkinter library
+from tkinter import *
+import tkinter.messagebox  #need to import this
+import string
+
+def processdata():
+#process data, note access to tkinter variables
+##name=name.get()
+##    mlabel2 = Label(mGui, text=name.get())
+##    mlabel2.pack()
+##    print(book.get())
+    ubook=string.capwords(book.get())
+    print(ubook)
+    bookEntry.delete(0,END)
+##    magelabel = Label(mGui, text=age.get())
+##    magelabel.pack()
+##    print(stock.get())
+    newstock=stock.get()
+    print(newstock)
+
+    print(genre.get())
+    return
+
+
+def Quit():
+  #  mExit = messagebox.askyesno(title="Quit", message="Are you sure")
+    mExit = messagebox.askokcancel(title="Quit", message="Are you sure")
+    if mExit >0: #1 is True 0 is False
+        mGui.destroy()
+    return
+
+mGui=Tk()
+
+#variable types that are used by tkinter
+book=StringVar()
+stock=IntVar()
+genre=StringVar()
+
+#primary window
+mGui.geometry('450x450+50+30') #+50 +30 give starting postion on screen
+mGui.title('Book Stock')
+mGui.configure(background = '#E0E0EB')
+
+#Simple label used for header
+mlabel = Label(mGui,text='Book Stock management system',fg='black',bg='white')
+mlabel.pack()
+
+#data entry label and Entry field for text and integer. Includes insertion of default values
+#note the text variables as name and age as declared above
+bookEntryl = Label(mGui,text='Book Title',fg='red',bg='white')
+bookEntryl.pack()
+bookEntry = Entry(mGui,textvariable=book)
+bookEntry.insert(10,"noname")
+bookEntry.pack()
+
+stockEntryl = Label(mGui,text='Copies Stocked',fg='red',bg='white')
+stockEntryl.pack()
+stockEntry = Entry(mGui, textvariable=stock)
+stockEntry.insert(10,1)
+stockEntry.pack()
+
+#obtain data from a pull down list
+genreEntry1 = Label(mGui, text='Please Select the Genre of the Book:',fg="red", bg="white")
+genreEntry1.pack()
+genreEntry=OptionMenu(mGui, genre, "Science Fiction", "Sport", "Biography", "Political Thriller")
+genreEntry.pack()
+
+#OK button ie event used to initiatiate a command ie processdata
+mbutton = Button(mGui,text="Submit",command=processdata, fg='red')
+mbutton.pack()
+
+#QUIT button ie event to quit
+qbutton = Button(mGui,text="Division by zero detected the universe has ended (Quit)",command=Quit, fg='red')
+qbutton.pack()
+
+mGui.mainloop()
