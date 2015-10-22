@@ -1,0 +1,169 @@
+#-------------------------------------------------------------------------------
+# Name:        images
+# Purpose:     To store the metadata for images
+# Version:     v2 - Finaaly fixed the AttributeError: 'NoneType' object has no attribute 'tk' problem and got the OptionMenu working.
+#
+# Author:      Ashleigh Mudge
+#
+# Created:     24/08/2015
+# Copyright:   (c) Ashleigh Mudge 2015
+# Licence:     <your licence>
+#-------------------------------------------------------------------------------
+#import GUI library
+from tkinter import *
+
+#for Python V3 you must explicitely load the messagebox
+import tkinter.messagebox
+
+#create the book class incorporating instance variables and methods
+class Images:
+    def __init__(self, imageID_i, filename_i, title_i, owner_i, licencetype_i):
+        self.imageID = imageID_i
+        self.filename = filename_i
+        self.title = title_i
+        self.owner = owner_i
+        self.type = 'Image'
+        self.licencetype = licencetype_i
+        self.is_read = False
+
+    def get_imageID(self):
+        return self.imageID
+
+    def get_filename(self):
+        return self.filename
+
+    def get_title(self):
+        return self.title
+
+    def get_owner(self):
+        return self.owner
+
+    def get_licencetype(self):
+        return self.licencetype
+
+    def get_is_read(self):
+        return self.is_read
+
+    def read(self):
+        self.is_read = True
+
+
+
+#create the GUI interface
+class GUI:
+
+    def __init__(self):
+
+##        imageID = IntVar()
+##        filename = StringVar()
+##        title = StringVar()
+##        owner = StringVar()
+##        licencetype = StringVar()
+
+        # similar to root in other texts
+        window = Tk()
+        window.title("Data Entry Screen")
+        #setting root window and size
+        window.minsize(width=350, height=200)
+
+        #INITIALIZATION VARIABLES
+        #this variable stores whether the data has been validated or not
+        self.ready_to_write = False
+        #this will contain the list of all books entered via the gui
+        self.recordlist = []
+        self.licencetype = StringVar(window)
+
+        #creating label and field variable in GUI for each entry field
+        imageID_label = Label(window, text='Enter Image ID:')
+        imageID_label.grid(row=1) #.pack() places the component in the window
+        self.imageID_field = Entry(window)
+        self.imageID_field.grid(row=1, column=1)
+
+        filename_label = Label(window, text='Enter Filename (including extention):')
+        filename_label.grid(row=2)
+        self.filename_field = Entry(window)
+        self.filename_field.grid(row=2, column=1)
+
+        title_label = Label(window, text='Enter Title:')
+        title_label.grid(row=3)
+        self.title_field = Entry(window)
+        self.title_field.grid(row=3, column=1)
+
+        owner_label = Label(window, text='Enter Owner\'s Name:')
+        owner_label.grid(row=4)
+        self.owner_field = Entry(window)
+        self.owner_field.grid(row=4, column=1)
+
+        licencetype_label = Label(window, text='Enter Licence Type:')
+        licencetype_label.grid(row=5)
+        self.licencetypeEntry = OptionMenu(window, self.licencetype, "BY (Attribution alone)", "BY-NC (Attribution + Noncommercial)", "BY-SA (Attribution + ShareAlike)", "BY-ND (Attribution + NoDerivatives)", "BY-NC-SA (Attribution + Noncommercial + ShareAlike)", "BY-NC-ND (Attribution + Noncommercial + NoDerivatives)")
+        #Retrieved from https://en.wikipedia.org/wiki/Creative_Commons_license
+        self.licencetypeEntry.grid(row=5, column=1)
+
+##        #obtain data from a pull down list
+##genreEntry1 = Label(mGui, text='Please Select the Genre of the Book:',fg="red", bg="white")
+##genreEntry1.pack()
+##genreEntry=OptionMenu(mGui, genre, "Science Fiction", "Sport", "Biography", "Political Thriller")
+##genreEntry.pack()
+
+##genreEntry=OptionMenu(mGui, genre, "Science Fiction", "Sport", "Biography", "Political Thriller")
+
+        #creates a button. The command function is run when the button is pressed
+        #the 'command=self.doSubmit' is an example of a callback method
+        button_label = Label(window, text='Press to validate:')
+        button = Button(window, text='Submit', command=self.doSubmit)
+
+        button_label1 = Label(window, text='Convert Record to csv:')
+        button1 = Button(window, text='Write to csv', command=self.writetocsv)
+
+        button_label.grid(row=6)
+        button.grid(row=6, column=1)
+        button_label1.grid(row=7)
+        button1.grid(row=7, column=1)
+
+        #waiting for user input - event driven program
+        window.mainloop()
+
+    def doSubmit(self):
+        #this is the callback method for the 'Submit' button
+        if len(self.imageID_field.get()) <1 or len(self.filename_field.get()) <1 or len(self.title_field.get()) <1 or len(self.owner_field.get()) <1 or len(self.licencetype_field.get()) <1:
+            tkinter.messagebox.showwarning('Warning!','Please enter a value for all fields')
+        else:
+            try:
+                validated_isbn = int(self.isbn_field.get())
+                self.recordlist.append(Book(self.imageID_field.get(),self.filename_field.get(), self.title_field.get(), self.owner_field.get(), self.licencetype_field.get()))
+                self.ready_to_write= True
+                tkinter.messagebox.showinfo('Notice','Submission Sucessful')
+
+                self.imageID_field.delete(0, END) #command to clear field
+                self.filename_field.delete(0, END)
+                self.title_field.delete(0, END)
+                self.owner_field.delete(0, END)
+                self.licencetype_field.delete(0, END)
+            except:
+                tkinter.messagebox.showwarning('Warning!','Please enter numeric isbn code')
+                print('Please enter numeric isbn code')
+
+
+    def writetocsv(self):
+        #this is the callback method for the 'write to csv' button
+        import csv
+        file_name = 'images.csv'
+
+        if self.ready_to_write: #cheacks data has been previously validated
+            ofile = open(file_name, 'a') #open with write('w') or append('a') privelages
+            writer = csv.writer(ofile, delimiter=',')
+            #cycles through list of records created by gui
+            for record in self.recordlist:
+                print(record.get_title())
+                writer.writerow([record.get_imageID(), record.get_filename(), record.get_title(), record.get_owner(), record.get_licencetype(), record.get_is_read()])
+            #explicitly closes the output file
+            ofile.close()
+        else:
+            tkinter.messagebox.showwarning('Error!', 'You need to Validate your data')
+
+        self.ready_to_write= False
+        tkinter.messagebox.showinfo('Notice',file_name+' File Generated Sucessfully')
+
+#initialises the programme
+GUI()
